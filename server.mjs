@@ -5,7 +5,7 @@ import e from "express";
 const app = express();
 app.use(express.json());
 app.use(cors());
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5001;
 
 // app.get("/abc", (req, res) => {
 //   console.log("request ip:", req.ip);
@@ -79,16 +79,23 @@ app.delete("/product/:id", (req, res) => {
 
 app.put("/product/:id", (req, res) => {
   const id = req.params.id;
+  const body = req.body;
+  if(!body.name || !body.price || !body.description) {
+    res.status(400).send({
+      message: "please fill all the fields",
+    });
+    return;
+  }
   const product = products.find((p) => p.id == id);
   if (!product) {
-    res.send({
+    res.status(404).send({
       message: "product not found",
     });
   } else {
     product.name = req.body.name;
     product.price = req.body.price;
     product.description = req.body.description;
-    res.send({
+    res.status(200).send({
       message: "product updated",
     });
   }
